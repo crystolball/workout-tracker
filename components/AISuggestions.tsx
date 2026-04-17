@@ -126,7 +126,7 @@ export default function AISuggestions({
           <p className="text-sm text-indigo-900 mb-3">{suggestion}</p>
           <div className="flex gap-2">
             <button onClick={() => setStage("accepted")} className="text-xs bg-green-500 hover:bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
-              I've done this!
+              I&apos;ve done this!
             </button>
             <button onClick={handleDismiss} className="text-xs text-indigo-400 hover:text-indigo-600 px-2 py-1.5">
               Dismiss

@@ -28,7 +28,7 @@ export default function WorkoutSection({ section }: Props) {
         {section.title}
       </h2>
       <div className="space-y-4">
-        {groups.map((group, i) =>
+        {groups.map((group) =>
           group.supersetId ? (
             <div
               key={group.supersetId}
