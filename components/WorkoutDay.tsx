@@ -18,7 +18,7 @@ export default function WorkoutDay({ workout }: Props) {
         <p className="text-sm text-gray-400 uppercase tracking-widest font-medium">{today}</p>
         <h1 className="text-4xl font-black text-gray-900 mt-1">
           Workout {workout.dayNumber} —{" "}
-          <span className="text-indigo-600">{workout.name}</span>
+          <span className="text-pink-500">{workout.name}</span>
         </h1>
         <p className="text-gray-500 mt-1">{workout.description}</p>
       </div>
@@ -26,12 +26,12 @@ export default function WorkoutDay({ workout }: Props) {
       {/* Warm Up */}
       <div className="mb-8">
         <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">
-          Warm Up
+          Warm Up 🔥
         </h2>
-        <ul className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-1.5">
+        <ul className="bg-rose-50 border border-rose-200 rounded-xl p-4 space-y-1.5">
           {workout.warmUp.map((item, i) => (
-            <li key={i} className="text-sm text-green-800 flex items-start gap-2">
-              <span className="text-green-400 mt-0.5">✓</span>
+            <li key={i} className="text-sm text-rose-800 flex items-start gap-2">
+              <span className="text-rose-400 mt-0.5">🩷</span>
               {item}
             </li>
           ))}
@@ -46,12 +46,12 @@ export default function WorkoutDay({ workout }: Props) {
       {/* Cool Down */}
       <div className="mt-4">
         <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">
-          Cool Down
+          Cool Down 🪶 (feather era)
         </h2>
-        <ul className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-1.5">
+        <ul className="bg-purple-50 border border-purple-200 rounded-xl p-4 space-y-1.5">
           {workout.coolDown.map((item, i) => (
-            <li key={i} className="text-sm text-blue-800 flex items-start gap-2">
-              <span className="text-blue-400 mt-0.5">✓</span>
+            <li key={i} className="text-sm text-purple-800 flex items-start gap-2">
+              <span className="text-purple-400 mt-0.5">✨</span>
               {item}
             </li>
           ))}

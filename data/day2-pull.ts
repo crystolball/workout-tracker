@@ -2,8 +2,8 @@ import { WorkoutDay } from "@/lib/types";
 
 const day2Pull: WorkoutDay = {
   dayNumber: 2,
-  name: "PULL",
-  description: "Back, biceps, and core",
+  name: "Espresso PULL ☕",
+  description: "Back, biceps, and core ☕",
   warmUp: [
     "Cat Cows — 8 reps",
     "Kneeling Thoracic Rotation — 8 reps each side",
@@ -19,7 +19,7 @@ const day2Pull: WorkoutDay = {
   ],
   sections: [
     {
-      title: "Main Sets",
+      title: "Main Glow-Up Moves 💪",
       exercises: [
         {
           id: "bench-supported-rows",

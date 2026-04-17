@@ -8,17 +8,17 @@ type WorkoutMark = "W1" | "W2" | "W3" | "W4" | null;
 const CYCLE: WorkoutMark[] = ["W1", "W2", "W3", "W4", null];
 
 const COLORS: Record<NonNullable<WorkoutMark>, string> = {
-  W1: "bg-indigo-500 border-indigo-500 text-white",
+  W1: "bg-pink-500 border-pink-500 text-white",
   W2: "bg-purple-500 border-purple-500 text-white",
-  W3: "bg-pink-500 border-pink-500 text-white",
-  W4: "bg-teal-500 border-teal-500 text-white",
+  W3: "bg-fuchsia-500 border-fuchsia-500 text-white",
+  W4: "bg-rose-500 border-rose-500 text-white",
 };
 
 const COUNT_COLORS: Record<NonNullable<WorkoutMark>, string> = {
-  W1: "text-indigo-600",
+  W1: "text-pink-600",
   W2: "text-purple-600",
-  W3: "text-pink-600",
-  W4: "text-teal-600",
+  W3: "text-fuchsia-600",
+  W4: "text-rose-600",
 };
 
 function getWeekKey() {
@@ -56,7 +56,7 @@ export default function WeeklyTracker() {
     <div className="max-w-2xl mx-auto px-4 pt-6 pb-2">
       <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-bold text-gray-800 text-sm">This Week</h2>
+          <h2 className="font-bold text-gray-800 text-sm">This Week, babe 💕</h2>
           <div className="flex gap-3 text-xs text-gray-500">
             {counts.filter((c) => c.count > 0).map(({ label, count }) => (
               <span key={label}>
@@ -82,7 +82,7 @@ export default function WeeklyTracker() {
           ))}
         </div>
         <p className="text-xs text-gray-400 mt-2 text-center">
-          Tap a day to mark it — cycles W1 → W2 → W3 → W4 → clear
+          tap a day to slay 💅 cycles W1 → W2 → W3 → W4 → clear
         </p>
       </div>
     </div>

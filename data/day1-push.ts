@@ -2,8 +2,8 @@ import { WorkoutDay } from "@/lib/types";
 
 const day1Push: WorkoutDay = {
   dayNumber: 1,
-  name: "PUSH",
-  description: "Chest, shoulders, and triceps",
+  name: "Short n' Sweet PUSH 💅",
+  description: "Chest, shoulders, and triceps ✨",
   warmUp: [
     "Back Lying Trunk Rotation (Table Top Position) — 10 reps",
     "Lying Back Internal/External Shoulder Rotation (Goal Post Position) — 8 reps",
@@ -18,7 +18,7 @@ const day1Push: WorkoutDay = {
   ],
   sections: [
     {
-      title: "Main Sets",
+      title: "Main Glow-Up Moves 💪",
       exercises: [
         {
           id: "bench-chest-press",

@@ -2,8 +2,8 @@ import { WorkoutDay } from "@/lib/types";
 
 const day3PushAlt: WorkoutDay = {
   dayNumber: 3,
-  name: "PUSH",
-  description: "Chest, shoulders, and triceps — alternative exercises",
+  name: "Please Please PUSH 🌸",
+  description: "Chest, shoulders, and triceps — alternative era 🌸",
   warmUp: [
     "Arm Circles — 8 reps each direction",
     "Lying Back Internal/External Shoulder Rotation (Goal Post Position) — 8 reps",
@@ -19,7 +19,7 @@ const day3PushAlt: WorkoutDay = {
   ],
   sections: [
     {
-      title: "Main Sets",
+      title: "Main Glow-Up Moves 💪",
       exercises: [
         {
           id: "incline-db-press",

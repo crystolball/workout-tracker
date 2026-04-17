@@ -32,18 +32,18 @@ export default function WorkoutSection({ section }: Props) {
           group.supersetId ? (
             <div
               key={group.supersetId}
-              className="border-2 border-purple-200 rounded-2xl p-3 bg-purple-50"
+              className="border-2 border-pink-200 rounded-2xl p-3 bg-pink-50"
             >
-              <div className="text-xs font-bold uppercase tracking-widest text-purple-500 mb-3 flex items-center gap-1.5">
-                <span className="inline-block w-2 h-2 rounded-full bg-purple-400"></span>
-                Superset — do both back to back, then rest
+              <div className="text-xs font-bold uppercase tracking-widest text-pink-500 mb-3 flex items-center gap-1.5">
+                <span className="inline-block w-2 h-2 rounded-full bg-pink-400"></span>
+                💜 Superset Slay — do both back to back, then rest
               </div>
               <div className="space-y-3">
                 {group.exercises.map((exercise) => (
                   <ExerciseCard key={exercise.id} exercise={exercise} hideRest />
                 ))}
               </div>
-              <div className="mt-3 flex items-center gap-2 text-xs text-purple-500 font-medium">
+              <div className="mt-3 flex items-center gap-2 text-xs text-pink-500 font-medium">
                 <span>⏱</span>
                 <span>Rest {group.exercises[0].restBetweenSets} after the full superset</span>
               </div>

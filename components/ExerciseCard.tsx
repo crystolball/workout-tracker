@@ -89,13 +89,13 @@ export default function ExerciseCard({ exercise, hideRest = false }: Props) {
               </span>
             )}
           </div>
-          <span className="inline-block text-xs font-medium bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5 mt-1">
+          <span className="inline-block text-xs font-medium bg-pink-100 text-pink-600 rounded-full px-2 py-0.5 mt-1">
             {exercise.muscleGroup}
           </span>
           <p className="text-xs text-gray-400 mt-1 leading-snug">{exercise.muscleFocus}</p>
         </div>
         <div className="text-right shrink-0">
-          <div className="text-2xl font-bold text-indigo-600">{currentSets}</div>
+          <div className="text-2xl font-bold text-pink-500">{currentSets}</div>
           <div className="text-xs text-gray-500">sets</div>
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function ExerciseCard({ exercise, hideRest = false }: Props) {
         className="w-full text-left text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-2"
       >
         <span>{notesOpen ? "▾" : "▸"}</span>
-        <span>Breathing & Form Notes</span>
+        <span>Breathing & Glow-Up Notes 🌸</span>
       </button>
 
       {notesOpen && (

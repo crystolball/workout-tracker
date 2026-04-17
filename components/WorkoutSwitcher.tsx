@@ -25,8 +25,8 @@ export default function WorkoutSwitcher() {
                 onClick={() => setSelected(i as 0 | 1 | 2 | 3)}
                 className={`py-2.5 rounded-xl font-semibold text-sm transition-all ${
                   selected === i
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "bg-white text-gray-500 border border-gray-200 hover:border-indigo-300"
+                    ? "bg-pink-500 text-white shadow-sm"
+                    : "bg-white text-gray-500 border border-gray-200 hover:border-pink-300"
                 }`}
               >
                 Workout {w.dayNumber} — {w.name}

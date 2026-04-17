@@ -104,14 +104,14 @@ export default function AISuggestions({
       {stage === "idle" && (
         <button
           onClick={handleGetSuggestion}
-          className="inline-flex items-center gap-1.5 text-sm bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-3 py-1.5 font-medium transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-200 rounded-lg px-3 py-1.5 font-medium transition-colors"
         >
-          ✦ Too easy? Take it to the next level
+          ✨ Too easy? Ask Sabrina for the next level
         </button>
       )}
 
       {(stage === "loading" || stage === "upgrading") && (
-        <div className="inline-flex items-center gap-1.5 text-sm text-indigo-400 py-1.5">
+        <div className="inline-flex items-center gap-1.5 text-sm text-pink-400 py-1.5">
           <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -121,14 +121,14 @@ export default function AISuggestions({
       )}
 
       {stage === "suggested" && (
-        <div className="mt-2 bg-indigo-50 border border-indigo-200 rounded-xl p-3">
-          <div className="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-1">✦ AI Suggestion</div>
-          <p className="text-sm text-indigo-900 mb-3">{suggestion}</p>
+        <div className="mt-2 bg-pink-50 border border-pink-200 rounded-xl p-3">
+          <div className="text-xs font-bold uppercase tracking-widest text-pink-400 mb-1">✨ Sabrina Says</div>
+          <p className="text-sm text-pink-900 mb-3">{suggestion}</p>
           <div className="flex gap-2">
             <button onClick={() => setStage("accepted")} className="text-xs bg-green-500 hover:bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
               I&apos;ve done this!
             </button>
-            <button onClick={handleDismiss} className="text-xs text-indigo-400 hover:text-indigo-600 px-2 py-1.5">
+            <button onClick={handleDismiss} className="text-xs text-pink-400 hover:text-pink-600 px-2 py-1.5">
               Dismiss
             </button>
           </div>
@@ -140,8 +140,8 @@ export default function AISuggestions({
           <div className="text-xs font-bold uppercase tracking-widest text-green-500 mb-1">Progress noted!</div>
           <p className="text-sm text-green-800 mb-3">{suggestion}</p>
           <div className="flex gap-2">
-            <button onClick={handleGoHarder} className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
-              Ready to go harder ✦
+            <button onClick={handleGoHarder} className="text-xs bg-pink-500 hover:bg-pink-600 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
+              Ready to go harder 💅
             </button>
             <button onClick={handleDismiss} className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1.5">
               Done
@@ -151,10 +151,10 @@ export default function AISuggestions({
       )}
 
       {stage === "update-form" && (
-        <div className="mt-2 bg-indigo-50 border border-indigo-200 rounded-xl p-3">
-          <div className="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-1">✦ Next Level</div>
-          <p className="text-sm text-indigo-900 mb-3">{harderSuggestion}</p>
-          <p className="text-xs text-indigo-600 font-medium mb-2">Update your exercise to your new targets:</p>
+        <div className="mt-2 bg-pink-50 border border-pink-200 rounded-xl p-3">
+          <div className="text-xs font-bold uppercase tracking-widest text-pink-400 mb-1">✨ Next Level Era</div>
+          <p className="text-sm text-pink-900 mb-3">{harderSuggestion}</p>
+          <p className="text-xs text-pink-600 font-medium mb-2">Update your exercise to your new targets:</p>
           <div className="grid grid-cols-3 gap-2 mb-3">
             <div>
               <label className="text-xs text-gray-500 block mb-1">Sets</label>
@@ -162,7 +162,7 @@ export default function AISuggestions({
                 type="text"
                 value={editSets}
                 onChange={(e) => setEditSets(e.target.value)}
-                className="w-full border border-indigo-200 rounded-lg px-2 py-1.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full border border-pink-200 rounded-lg px-2 py-1.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
             </div>
             <div>
@@ -171,7 +171,7 @@ export default function AISuggestions({
                 type="text"
                 value={editReps}
                 onChange={(e) => setEditReps(e.target.value)}
-                className="w-full border border-indigo-200 rounded-lg px-2 py-1.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full border border-pink-200 rounded-lg px-2 py-1.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
             </div>
             <div>
@@ -180,12 +180,12 @@ export default function AISuggestions({
                 type="text"
                 value={editWeight}
                 onChange={(e) => setEditWeight(e.target.value)}
-                className="w-full border border-indigo-200 rounded-lg px-2 py-1.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                className="w-full border border-pink-200 rounded-lg px-2 py-1.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={handleSave} className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
+            <button onClick={handleSave} className="text-xs bg-pink-500 hover:bg-pink-600 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors">
               Save progress
             </button>
             <button onClick={handleDismiss} className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1.5">
