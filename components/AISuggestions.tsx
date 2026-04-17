@@ -106,7 +106,7 @@ export default function AISuggestions({
           onClick={handleGetSuggestion}
           className="inline-flex items-center gap-1.5 text-sm bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-3 py-1.5 font-medium transition-colors"
         >
-          ✦ AI Suggestion
+          ✦ Too easy? Take it to the next level
         </button>
       )}
 
