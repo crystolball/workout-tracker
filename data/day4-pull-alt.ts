@@ -41,7 +41,7 @@ const day4PullAlt: WorkoutDay = {
           muscleFocus: "Latissimus dorsi & serratus anterior (side of back and rib cage) — great for building the wide V-taper back shape",
           sets: 3,
           reps: "12",
-          weightDisplay: "One 10 lb dumbbell (both hands)",
+          weightDisplay: "4.5 kg dumbbell (both hands)",
           restBetweenSets: "60–90 sec",
           breathingCue: "Inhale as you lower the weight behind your head. Exhale as you pull it back over your chest.",
           formNotes: "Lie flat on bench, hold one dumbbell with both hands over your chest. Keep a slight bend in elbows. Lower the weight in an arc behind your head until you feel a stretch in your lats. Pull back over chest.",
