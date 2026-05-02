@@ -1,5 +1,6 @@
 import { WorkoutSection as WorkoutSectionType } from "@/lib/types";
 import ExerciseCard from "./ExerciseCard";
+import RestTimer from "./RestTimer";
 
 interface Props {
   section: WorkoutSectionType;
@@ -28,28 +29,27 @@ export default function WorkoutSection({ section }: Props) {
         {section.title}
       </h2>
       <div className="space-y-4">
-        {groups.map((group) =>
+        {groups.map((group, gi) =>
           group.supersetId ? (
-            <div
-              key={group.supersetId}
-              className="border-2 border-pink-200 rounded-2xl p-3 bg-pink-50"
-            >
-              <div className="text-xs font-bold uppercase tracking-widest text-pink-500 mb-3 flex items-center gap-1.5">
-                <span className="inline-block w-2 h-2 rounded-full bg-pink-400"></span>
-                💜 Superset Slay — do both back to back, then rest
+            <div key={group.supersetId}>
+              <div className="border-2 border-pink-200 rounded-2xl p-3 bg-pink-50">
+                <div className="text-xs font-bold uppercase tracking-widest text-pink-500 mb-3 flex items-center gap-1.5">
+                  <span className="inline-block w-2 h-2 rounded-full bg-pink-400"></span>
+                  💜 Superset Slay — do both back to back, then rest
+                </div>
+                <div className="space-y-3">
+                  {group.exercises.map((exercise) => (
+                    <ExerciseCard key={exercise.id} exercise={exercise} hideRest />
+                  ))}
+                </div>
               </div>
-              <div className="space-y-3">
-                {group.exercises.map((exercise) => (
-                  <ExerciseCard key={exercise.id} exercise={exercise} hideRest />
-                ))}
-              </div>
-              <div className="mt-3 flex items-center gap-2 text-xs text-pink-500 font-medium">
-                <span>⏱</span>
-                <span>Rest {group.exercises[0].restBetweenSets} after the full superset</span>
-              </div>
+              <RestTimer defaultSeconds={60} />
             </div>
           ) : (
-            <ExerciseCard key={group.exercises[0].id} exercise={group.exercises[0]} />
+            <div key={group.exercises[0].id}>
+              <ExerciseCard exercise={group.exercises[0]} />
+              {gi < groups.length - 1 && <RestTimer defaultSeconds={60} />}
+            </div>
           )
         )}
       </div>

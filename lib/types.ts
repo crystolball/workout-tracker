@@ -19,7 +19,7 @@ export interface WorkoutSection {
 }
 
 export interface WorkoutDay {
-  dayNumber: 1 | 2 | 3 | 4;
+  dayNumber: number;
   name: string;
   description: string;
   warmUp: string[];
