@@ -59,7 +59,9 @@ function loadAllWeeks(): Record<string, WorkoutMark[]> {
 
 export default function WeeklyTracker() {
   const [allWeeks, setAllWeeks] = useState<Record<string, WorkoutMark[]>>({});
+  const [isDragging, setIsDragging] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const dragStart = useRef({ x: 0, scrollLeft: 0 });
   const currentKey = getCurrentWeekKey();
 
   useEffect(() => {
@@ -74,6 +76,27 @@ export default function WeeklyTracker() {
       scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
     }
   }, [allWeeks]);
+
+  function onMouseDown(e: React.MouseEvent) {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    dragStart.current = {
+      x: e.pageX - scrollRef.current.offsetLeft,
+      scrollLeft: scrollRef.current.scrollLeft,
+    };
+  }
+
+  function onMouseMove(e: React.MouseEvent) {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - dragStart.current.x) * 1.5;
+    scrollRef.current.scrollLeft = dragStart.current.scrollLeft - walk;
+  }
+
+  function stopDrag() {
+    setIsDragging(false);
+  }
 
   function toggle(weekKey: string, index: number) {
     setAllWeeks((prev) => {
@@ -95,8 +118,9 @@ export default function WeeklyTracker() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 pt-6 pb-2">
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 pt-4 pb-3">
           <h2 className="font-bold text-gray-800 text-sm">This Week, babe 💕</h2>
           <div className="flex gap-3 text-xs text-gray-500">
             {counts.map(({ label, count }) => (
@@ -108,9 +132,17 @@ export default function WeeklyTracker() {
           </div>
         </div>
 
-        {/* Horizontal scroll of all weeks */}
-        <div ref={scrollRef} className="overflow-x-auto pb-1">
-          <div className="flex gap-5" style={{ minWidth: "max-content" }}>
+        {/* Horizontal scroll — drag with mouse or swipe on mobile */}
+        <div
+          ref={scrollRef}
+          className={`overflow-x-auto pb-3 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+          style={{ WebkitOverflowScrolling: "touch" }}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={stopDrag}
+          onMouseLeave={stopDrag}
+        >
+          <div className="flex gap-6 px-4" style={{ minWidth: "max-content" }}>
             {weeks.map((weekKey) => {
               const marks = allWeeks[weekKey] ?? Array(7).fill(null);
               const isCurrentWeek = weekKey === currentKey;
@@ -120,7 +152,7 @@ export default function WeeklyTracker() {
                 <div key={weekKey} className="flex-shrink-0">
                   {/* Week date label */}
                   <div
-                    className={`text-xs font-semibold text-center mb-2 px-1 ${
+                    className={`text-xs font-semibold text-center mb-2 ${
                       isCurrentWeek ? "text-pink-500" : "text-gray-400"
                     }`}
                   >
@@ -128,25 +160,23 @@ export default function WeeklyTracker() {
                     {isCurrentWeek && <span className="ml-1">✨</span>}
                   </div>
 
-                  {/* Day grid */}
-                  <div className="flex gap-1">
+                  {/* Day grid — 44px cells so 7 days = ~356px, overflows on most phones */}
+                  <div className="flex gap-2">
                     {DAYS.map((day, i) => (
-                      <div key={day} className="flex flex-col items-center gap-0.5 w-9">
-                        <span className="text-xs text-gray-400 font-medium">{day}</span>
+                      <div key={day} className="flex flex-col items-center gap-1">
+                        <span className="text-xs text-gray-400 font-medium w-11 text-center">{day}</span>
                         <button
-                          onClick={() => isCurrentWeek && toggle(weekKey, i)}
+                          onClick={() => toggle(weekKey, i)}
                           title={
                             isCurrentWeek
                               ? "Click to cycle: empty → W1 → W2 → W3 → W4 → empty"
                               : formatWeekLabel(weekKey)
                           }
-                          className={`w-9 h-9 rounded-xl text-xs font-bold transition-all border-2 ${
+                          className={`w-11 h-11 rounded-xl text-xs font-bold transition-all border-2 ${
                             marks[i]
                               ? COLORS[marks[i]!]
-                              : isCurrentWeek
-                              ? "bg-gray-50 border-gray-200 text-gray-300 hover:border-pink-300 cursor-pointer"
-                              : "bg-gray-50 border-gray-100 text-gray-200 cursor-default"
-                          }`}
+                              : "bg-gray-50 border-gray-200 text-gray-300"
+                          } ${isCurrentWeek ? "hover:border-pink-300 cursor-pointer" : "cursor-default opacity-70"}`}
                         >
                           {marks[i] ?? ""}
                         </button>
@@ -154,9 +184,9 @@ export default function WeeklyTracker() {
                     ))}
                   </div>
 
-                  {/* Week summary */}
+                  {/* Past week summary badges */}
                   {!isCurrentWeek && hasAnyMark && (
-                    <div className="mt-1.5 flex justify-center gap-1">
+                    <div className="mt-2 flex justify-center gap-1">
                       {(["W1", "W2", "W3", "W4"] as const).map((w) => {
                         const c = marks.filter((m) => m === w).length;
                         return c > 0 ? (
@@ -184,8 +214,8 @@ export default function WeeklyTracker() {
           </div>
         </div>
 
-        <p className="text-xs text-gray-400 mt-3 text-center">
-          tap this week to slay 💅 · scroll left to see your history
+        <p className="text-xs text-gray-400 pb-3 text-center">
+          tap a day to log it 💅 · swipe left for history
         </p>
       </div>
     </div>
