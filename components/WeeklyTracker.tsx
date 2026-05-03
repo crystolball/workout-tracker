@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 type WorkoutMark = "W1" | "W2" | "W3" | "W4" | null;
@@ -14,13 +14,6 @@ const COLORS: Record<NonNullable<WorkoutMark>, string> = {
   W4: "bg-rose-500 border-rose-500 text-white",
 };
 
-const DOT_COLORS: Record<NonNullable<WorkoutMark>, string> = {
-  W1: "bg-pink-400",
-  W2: "bg-purple-400",
-  W3: "bg-fuchsia-400",
-  W4: "bg-rose-400",
-};
-
 function getMondayKey(date: Date): string {
   const d = new Date(date);
   const day = d.getDay();
@@ -29,193 +22,162 @@ function getMondayKey(date: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-function getCurrentWeekKey(): string {
-  return getMondayKey(new Date());
+function offsetWeek(mondayKey: string, weeks: number): string {
+  const d = new Date(mondayKey + "T00:00:00");
+  d.setDate(d.getDate() + weeks * 7);
+  return d.toISOString().slice(0, 10);
 }
 
-function formatWeekLabel(mondayKey: string): string {
+function getDatesForWeek(mondayKey: string): Date[] {
   const monday = new Date(mondayKey + "T00:00:00");
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
-  return `${monday.toLocaleDateString("en-US", opts)} – ${sunday.toLocaleDateString("en-US", opts)}`;
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d;
+  });
 }
 
-function loadAllWeeks(): Record<string, WorkoutMark[]> {
-  const result: Record<string, WorkoutMark[]> = {};
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)!;
-    if (key.startsWith("tracker-")) {
-      const weekKey = key.slice("tracker-".length);
-      try {
-        result[weekKey] = JSON.parse(localStorage.getItem(key)!);
-      } catch {
-        // skip corrupt data
-      }
-    }
+function formatMonthLabel(mondayKey: string): string {
+  const dates = getDatesForWeek(mondayKey);
+  const start = dates[0];
+  const end = dates[6];
+  const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+  if (start.getMonth() === end.getMonth()) {
+    return `${start.toLocaleDateString("en-US", { month: "long" })} ${start.getDate()}–${end.getDate()}`;
   }
-  return result;
+  return `${start.toLocaleDateString("en-US", opts)} – ${end.toLocaleDateString("en-US", opts)}`;
+}
+
+function loadWeek(weekKey: string): WorkoutMark[] {
+  try {
+    const saved = localStorage.getItem(`tracker-${weekKey}`);
+    return saved ? JSON.parse(saved) : Array(7).fill(null);
+  } catch {
+    return Array(7).fill(null);
+  }
 }
 
 export default function WeeklyTracker() {
-  const [allWeeks, setAllWeeks] = useState<Record<string, WorkoutMark[]>>({});
-  const [isDragging, setIsDragging] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const dragStart = useRef({ x: 0, scrollLeft: 0 });
-  const currentKey = getCurrentWeekKey();
+  const currentKey = getMondayKey(new Date());
+  const [viewKey, setViewKey] = useState(currentKey);
+  const [marks, setMarks] = useState<WorkoutMark[]>(Array(7).fill(null));
 
+  // Load marks whenever the viewed week changes
   useEffect(() => {
-    const data = loadAllWeeks();
-    if (!data[currentKey]) data[currentKey] = Array(7).fill(null);
-    setAllWeeks(data);
-  }, [currentKey]);
+    setMarks(loadWeek(viewKey));
+  }, [viewKey]);
 
-  // Scroll to the end (current week) on load
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-    }
-  }, [allWeeks]);
-
-  function onMouseDown(e: React.MouseEvent) {
-    if (!scrollRef.current) return;
-    setIsDragging(true);
-    dragStart.current = {
-      x: e.pageX - scrollRef.current.offsetLeft,
-      scrollLeft: scrollRef.current.scrollLeft,
-    };
-  }
-
-  function onMouseMove(e: React.MouseEvent) {
-    if (!isDragging || !scrollRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - dragStart.current.x) * 1.5;
-    scrollRef.current.scrollLeft = dragStart.current.scrollLeft - walk;
-  }
-
-  function stopDrag() {
-    setIsDragging(false);
-  }
-
-  function toggle(weekKey: string, index: number) {
-    setAllWeeks((prev) => {
-      const weekMarks = [...(prev[weekKey] ?? Array(7).fill(null))];
-      const currentIdx = CYCLE.indexOf(weekMarks[index]);
-      weekMarks[index] = CYCLE[(currentIdx + 1) % CYCLE.length];
-      localStorage.setItem(`tracker-${weekKey}`, JSON.stringify(weekMarks));
-      return { ...prev, [weekKey]: weekMarks };
+  function toggle(index: number) {
+    if (viewKey !== currentKey) return; // only edit current week
+    setMarks((prev) => {
+      const next = [...prev];
+      const idx = CYCLE.indexOf(next[index]);
+      next[index] = CYCLE[(idx + 1) % CYCLE.length];
+      localStorage.setItem(`tracker-${viewKey}`, JSON.stringify(next));
+      return next;
     });
   }
 
-  const sortedKeys = Object.keys(allWeeks).sort();
-  const weeks = sortedKeys.includes(currentKey) ? sortedKeys : [...sortedKeys, currentKey];
+  function goBack() {
+    setViewKey((k) => offsetWeek(k, -1));
+  }
 
-  const currentMarks = allWeeks[currentKey] ?? Array(7).fill(null);
+  function goForward() {
+    if (viewKey < currentKey) setViewKey((k) => offsetWeek(k, 1));
+  }
+
+  const isCurrentWeek = viewKey === currentKey;
+  const canGoForward = viewKey < currentKey;
+  const dates = getDatesForWeek(viewKey);
+  const todayStr = new Date().toISOString().slice(0, 10);
+
   const counts = (["W1", "W2", "W3", "W4"] as const)
-    .map((w) => ({ label: w, count: currentMarks.filter((m) => m === w).length }))
+    .map((w) => ({ label: w, count: marks.filter((m) => m === w).length }))
     .filter((c) => c.count > 0);
 
   return (
     <div className="max-w-2xl mx-auto px-4 pt-6 pb-2">
       <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+
         {/* Header */}
-        <div className="flex items-center justify-between px-4 pt-4 pb-3">
-          <h2 className="font-bold text-gray-800 text-sm">This Week, babe 💕</h2>
-          <div className="flex gap-3 text-xs text-gray-500">
+        <div className="flex items-center justify-between px-4 pt-4 pb-2">
+          <h2 className="font-bold text-gray-800 text-sm">
+            {isCurrentWeek ? "This Week, babe 💕" : "Past Week 📅"}
+          </h2>
+          <div className="flex gap-2 text-xs text-gray-500">
             {counts.map(({ label, count }) => (
-              <span key={label} className="flex items-center gap-1">
-                <span className={`inline-block w-2 h-2 rounded-full ${DOT_COLORS[label]}`} />
-                <span className="font-semibold">{count}</span> {label}
+              <span key={label} className="font-semibold text-gray-600">
+                {count}×{label}
               </span>
             ))}
           </div>
         </div>
 
-        {/* Horizontal scroll — drag with mouse or swipe on mobile */}
-        <div
-          ref={scrollRef}
-          className={`overflow-x-auto pb-3 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
-          style={{ WebkitOverflowScrolling: "touch" }}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={stopDrag}
-          onMouseLeave={stopDrag}
-        >
-          <div className="flex gap-6 px-4" style={{ minWidth: "max-content" }}>
-            {weeks.map((weekKey) => {
-              const marks = allWeeks[weekKey] ?? Array(7).fill(null);
-              const isCurrentWeek = weekKey === currentKey;
-              const hasAnyMark = marks.some((m) => m !== null);
-
-              return (
-                <div key={weekKey} className="flex-shrink-0">
-                  {/* Week date label */}
-                  <div
-                    className={`text-xs font-semibold text-center mb-2 ${
-                      isCurrentWeek ? "text-pink-500" : "text-gray-400"
-                    }`}
-                  >
-                    {formatWeekLabel(weekKey)}
-                    {isCurrentWeek && <span className="ml-1">✨</span>}
-                  </div>
-
-                  {/* Day grid — 44px cells so 7 days = ~356px, overflows on most phones */}
-                  <div className="flex gap-2">
-                    {DAYS.map((day, i) => (
-                      <div key={day} className="flex flex-col items-center gap-1">
-                        <span className="text-xs text-gray-400 font-medium w-11 text-center">{day}</span>
-                        <button
-                          onClick={() => toggle(weekKey, i)}
-                          title={
-                            isCurrentWeek
-                              ? "Click to cycle: empty → W1 → W2 → W3 → W4 → empty"
-                              : formatWeekLabel(weekKey)
-                          }
-                          className={`w-11 h-11 rounded-xl text-xs font-bold transition-all border-2 ${
-                            marks[i]
-                              ? COLORS[marks[i]!]
-                              : "bg-gray-50 border-gray-200 text-gray-300"
-                          } ${isCurrentWeek ? "hover:border-pink-300 cursor-pointer" : "cursor-default opacity-70"}`}
-                        >
-                          {marks[i] ?? ""}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Past week summary badges */}
-                  {!isCurrentWeek && hasAnyMark && (
-                    <div className="mt-2 flex justify-center gap-1">
-                      {(["W1", "W2", "W3", "W4"] as const).map((w) => {
-                        const c = marks.filter((m) => m === w).length;
-                        return c > 0 ? (
-                          <span
-                            key={w}
-                            className={`text-xs font-semibold px-1.5 py-0.5 rounded-full ${
-                              w === "W1"
-                                ? "bg-pink-100 text-pink-600"
-                                : w === "W2"
-                                ? "bg-purple-100 text-purple-600"
-                                : w === "W3"
-                                ? "bg-fuchsia-100 text-fuchsia-600"
-                                : "bg-rose-100 text-rose-600"
-                            }`}
-                          >
-                            {c}×{w}
-                          </span>
-                        ) : null;
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+        {/* Week navigator */}
+        <div className="flex items-center justify-between px-4 pb-3">
+          <button
+            onClick={goBack}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
+          >
+            ◀
+          </button>
+          <div className="text-center">
+            <div className={`text-sm font-bold ${isCurrentWeek ? "text-pink-500" : "text-gray-600"}`}>
+              {formatMonthLabel(viewKey)}
+            </div>
+            {isCurrentWeek && (
+              <div className="text-xs text-gray-400 mt-0.5">current week</div>
+            )}
           </div>
+          <button
+            onClick={goForward}
+            className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors ${
+              canGoForward ? "hover:bg-gray-100 text-gray-500" : "text-gray-200 cursor-default"
+            }`}
+          >
+            ▶
+          </button>
+        </div>
+
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-1 px-3 pb-4">
+          {DAYS.map((day, i) => {
+            const date = dates[i];
+            const dateStr = date.toISOString().slice(0, 10);
+            const isToday = dateStr === todayStr;
+            const mark = marks[i];
+
+            return (
+              <div key={day} className="flex flex-col items-center gap-1">
+                {/* Day name */}
+                <span className={`text-xs font-semibold ${isToday ? "text-pink-500" : "text-gray-400"}`}>
+                  {day}
+                </span>
+                {/* Date number */}
+                <span className={`text-xs font-bold ${isToday ? "text-pink-500" : "text-gray-500"}`}>
+                  {date.getDate()}
+                </span>
+                {/* Workout button */}
+                <button
+                  onClick={() => toggle(i)}
+                  disabled={!isCurrentWeek}
+                  className={`w-full aspect-square rounded-xl text-xs font-bold border-2 transition-all ${
+                    mark
+                      ? COLORS[mark]
+                      : isCurrentWeek
+                      ? "bg-gray-50 border-gray-200 text-gray-300 hover:border-pink-300"
+                      : "bg-gray-50 border-gray-100 text-gray-200 cursor-default"
+                  } ${isToday && !mark ? "border-pink-200" : ""}`}
+                >
+                  {mark ?? ""}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         <p className="text-xs text-gray-400 pb-3 text-center">
-          tap a day to log it 💅 · swipe left for history
+          {isCurrentWeek ? "tap a day to log it 💅" : "← ▶ to browse your history"}
         </p>
       </div>
     </div>
